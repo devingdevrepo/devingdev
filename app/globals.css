@@ -1,0 +1,388 @@
+:root {
+  --cream: #f0eee6;
+  --paper: #faf9f5;
+  --ink: #141413;
+  --ink-soft: #46443e;
+  --muted: #6e6a62;
+  --clay: #d97757;
+  --clay-dark: #c2603f;
+  --sage: #bcd1ca;
+  --lavender: #cbcadb;
+  --line: #d9d5c9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+.page {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* ---------- nav ---------- */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.brand-name {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.accent {
+  color: var(--clay);
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--ink-soft);
+}
+
+.nav-links a:hover {
+  color: var(--clay);
+}
+
+/* ---------- hero ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 48px;
+  padding: 56px 0 72px;
+}
+
+.eyebrow {
+  margin: 0 0 18px;
+  color: var(--clay);
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+h1 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.6rem, 6vw, 4.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+h1 em {
+  color: var(--clay);
+  font-style: italic;
+}
+
+.rule {
+  display: block;
+  width: 84px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--clay);
+  margin: 28px 0 24px;
+}
+
+.lead {
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--ink-soft);
+  margin: 0 0 32px;
+  max-width: min(34ch, 100%);
+}
+
+.hero > * {
+  min-width: 0;
+}
+
+.hero-art {
+  display: flex;
+  justify-content: center;
+}
+
+.illustration {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  overflow: visible;
+}
+
+.illustration .sun {
+  transform-origin: 200px 200px;
+  animation: breathe 6s ease-in-out infinite;
+}
+
+.illustration .spark {
+  transform-origin: 116px 40px;
+  animation: spin 10s linear infinite;
+}
+
+@keyframes breathe {
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .illustration .sun,
+  .illustration .spark {
+    animation: none;
+  }
+}
+
+/* ---------- form ---------- */
+.signup {
+  width: 100%;
+  max-width: 520px;
+}
+
+.signup-row {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(20, 20, 19, 0.08);
+}
+
+.signup input[type="email"] {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 1.05rem;
+  padding: 12px 18px;
+  color: var(--ink);
+}
+
+.signup input[type="email"]::placeholder {
+  color: #9b968b;
+}
+
+.signup-row:focus-within {
+  border-color: var(--clay);
+  box-shadow: 0 0 0 4px rgba(217, 119, 87, 0.18);
+}
+
+.signup button {
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--cream);
+  font: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px 26px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.signup button:hover {
+  background: var(--clay);
+}
+
+.signup button:active {
+  transform: scale(0.97);
+}
+
+.signup button:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.form-note {
+  margin: 12px 0 0 20px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.form-note.error {
+  color: #b23b1e;
+}
+
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.success {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 520px;
+  padding: 18px 22px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 20px;
+}
+
+.success strong {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.3rem;
+}
+
+.success p {
+  margin: 2px 0 0;
+  color: var(--muted);
+}
+
+.success-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--clay);
+  color: var(--paper);
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+/* ---------- perks ---------- */
+.perks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding-bottom: 72px;
+}
+
+.perk {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 28px;
+}
+
+.perk-num {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 0.85rem;
+  color: var(--clay);
+  font-weight: 700;
+}
+
+.perk h2 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 600;
+  font-size: 1.35rem;
+  margin: 10px 0 6px;
+}
+
+.perk p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ---------- footer ---------- */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 24px 0 36px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- mobile ---------- */
+@media (max-width: 860px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 24px 0 56px;
+    gap: 32px;
+  }
+  .hero-art {
+    order: -1;
+  }
+  .illustration {
+    max-width: 260px;
+  }
+  .perks {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .signup-row {
+    flex-direction: column;
+    border-radius: 24px;
+  }
+  .signup button {
+    padding: 14px;
+  }
+  .form-note {
+    margin-left: 4px;
+  }
+}
