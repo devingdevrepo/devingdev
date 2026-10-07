@@ -18,9 +18,9 @@ One-page Next.js site for devingdev.com. Its only goal right now is collecting n
 
 ## Email sign-ups
 - Form: `components/SignupForm.tsx` posts to `app/api/subscribe/route.ts`.
-- Live site: saved to a Google Sheet through `SUBSCRIBE_WEBHOOK_URL` (Apps Script in `google-apps-script.js`).
-- Local dev without env vars: saved to `data/subscribers.csv` (git-ignored).
-- Never log or commit real subscriber emails. Never commit `.env.local`.
+- Saved to Upstash Redis through its REST API (plain `fetch`, no SDK): hash `subscribers`, field = email, value = JSON with `subscribedAt`, `source`, `consent`. `HSETNX` skips duplicates.
+- Env vars: `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` (or Vercel's `KV_REST_API_URL` / `KV_REST_API_TOKEN`). Same database for local and live.
+- Never store emails in files or in the repo. Never log or commit real subscriber emails. Never commit `.env.local`.
 
 ## Rules
 - Run `npm run build` after changes and fix any errors before saying you're done.

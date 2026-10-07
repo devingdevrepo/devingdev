@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
-import { appendFile, mkdir } from "node:fs/promises";
-import path from "node:path";
 
 // Simple, strict-enough email check (the browser also validates the field).
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+// Upstash Redis over its REST API (no package needed). The KV_* names are what
+// Vercel sets when you connect Upstash from the Vercel dashboard.
+const DB_URL = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
+const DB_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
 
 export async function POST(req: Request) {
   let body: { email?: unknown; company?: unknown };
@@ -23,6 +26,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
   }
 
+  if (!DB_URL || !DB_TOKEN) {
+    console.error("Upstash is not configured (see README), so the email was not saved.");
+    return NextResponse.json({ error: "Sign-ups are not set up yet. Please try again later." }, { status: 503 });
+  }
+
   const entry = {
     email,
     subscribedAt: new Date().toISOString(),
@@ -30,33 +38,17 @@ export async function POST(req: Request) {
     consent: "Joined newsletter from homepage form",
   };
 
-  const webhook = process.env.SUBSCRIBE_WEBHOOK_URL;
-
   try {
-    if (webhook) {
-      // Production: send to your Google Sheet (see README for the 2-minute setup).
-      const res = await fetch(webhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...entry, secret: process.env.SUBSCRIBE_WEBHOOK_SECRET ?? "" }),
-        redirect: "follow",
-      });
-      if (!res.ok) throw new Error(`Webhook responded ${res.status}`);
-      // Apps Script always answers 200, so check its own ok flag (false means the secret didn't match).
-      const result = (await res.json().catch(() => ({}))) as { ok?: boolean };
-      if (result.ok !== true) throw new Error("Webhook rejected the request (check the secret)");
-    } else if (process.env.NODE_ENV !== "production") {
-      // Local development: save to data/subscribers.csv so you can test without any setup.
-      const dir = path.join(process.cwd(), "data");
-      await mkdir(dir, { recursive: true });
-      await appendFile(path.join(dir, "subscribers.csv"), `${entry.email},${entry.subscribedAt},${entry.source}\n`);
-    } else {
-      console.error("SUBSCRIBE_WEBHOOK_URL is not set, so the email was not saved.");
-      return NextResponse.json(
-        { error: "Sign-ups are not set up yet. Please try again later." },
-        { status: 503 }
-      );
-    }
+    // One hash called "subscribers": field = email, value = JSON details.
+    // HSETNX only writes if the email isn't there yet, so duplicates are skipped.
+    const res = await fetch(DB_URL, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${DB_TOKEN}`, "Content-Type": "application/json" },
+      body: JSON.stringify(["HSETNX", "subscribers", email, JSON.stringify(entry)]),
+      cache: "no-store",
+    });
+    const data = (await res.json().catch(() => ({}))) as { error?: string };
+    if (!res.ok || data.error) throw new Error(data.error ?? `Upstash responded ${res.status}`);
   } catch (err) {
     console.error("Failed to save subscriber", err);
     return NextResponse.json({ error: "Could not save your email. Please try again." }, { status: 502 });

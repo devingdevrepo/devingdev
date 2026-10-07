@@ -9,35 +9,29 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. While you develop, every email you submit is saved to `data/subscribers.csv`, so you can test without any setup.
+Open http://localhost:3000. The form needs the database below before it can save emails (until then it shows "not set up yet").
 
-## Save emails for real (Google Sheet, free, about 5 minutes)
+## Save emails (Upstash, free, about 3 minutes)
 
-1. Create a new Google Sheet, for example "Deving Dev subscribers".
-2. In the sheet, go to **Extensions → Apps Script**.
-3. Delete what's there and paste the code from `google-apps-script.js`.
-4. Change `SECRET` to a long random text (for example, mash your keyboard for 30 characters).
-5. Click **Deploy → New deployment**, choose **Web app**, set **Execute as: Me** and **Who has access: Anyone**, then **Deploy** and allow access.
-6. Copy the **Web app URL**.
-7. Create a file called `.env.local` (copy `.env.example`) and set:
-   ```
-   SUBSCRIBE_WEBHOOK_URL=the Web app URL
-   SUBSCRIBE_WEBHOOK_SECRET=the same secret as in step 4
-   ```
-8. Restart `npm run dev` and submit a test email. It should appear in your sheet.
+Emails are never stored in this code or on your computer. They go to a small online database, the same one for local testing and the live site.
+
+1. Go to **console.upstash.com** and sign up (GitHub login works).
+2. Click **Create Database** → type **Redis**, name it `devingdev`, pick the region closest to you (Europe), plan **Free** → **Create**.
+3. On the database page, scroll to **REST API** and copy `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`.
+4. Copy `.env.example` to `.env.local` and paste both values in.
+5. Restart `npm run dev` and submit a test email.
+
+**See your emails:** open your database in Upstash → **Data Browser** → key `subscribers`. Each email is listed with its sign-up date.
 
 ## Put it online (Vercel)
 
-1. Push this folder to a GitHub repository.
-2. Import it at vercel.com (Next.js is detected automatically).
-3. In the project's **Settings → Environment Variables**, add `SUBSCRIBE_WEBHOOK_URL` and `SUBSCRIBE_WEBHOOK_SECRET`.
-4. Add your domain `devingdev.com` in **Settings → Domains** and follow the DNS steps.
-
-On the live site, if the webhook isn't set, the form shows a friendly "not set up yet" message instead of losing emails silently.
+1. Import the GitHub repository at vercel.com (Next.js is detected automatically).
+2. In the project's **Settings → Environment Variables**, add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` with the same values.
+3. Add your domain `devingdev.com` in **Settings → Domains** and follow the DNS steps.
 
 ## Later: moving to a newsletter tool
 
-When you're ready to send emails, export the sheet as CSV (**File → Download → CSV**) and import it into any newsletter tool. The `subscribed_at` column is your record of when each person signed up.
+Export the `subscribers` key from the Upstash Data Browser and import the emails into any newsletter tool. The `subscribedAt` value is your record of when each person signed up.
 
 ## Change the text and links
 
