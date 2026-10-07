@@ -20,6 +20,7 @@ One-page Next.js site for devingdev.com. Its only goal right now is collecting n
 - Form: `components/SignupForm.tsx` posts to `app/api/subscribe/route.ts`.
 - Saved to Upstash Redis through its REST API (plain `fetch`, no SDK): hash `subscribers`, field = email, value = JSON with `subscribedAt`, `source`, `consent`. `HSETNX` skips duplicates.
 - Env vars: `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` (or Vercel's `KV_REST_API_URL` / `KV_REST_API_TOKEN`). Same database for local and live.
+- New sign-ups (HSETNX result 1) trigger an email to `NOTIFY_EMAIL` via Resend's REST API, sent with `after()` so it never slows or breaks the sign-up. Optional: skipped without `RESEND_API_KEY`.
 - Never store emails in files or in the repo. Never log or commit real subscriber emails. Never commit `.env.local`.
 
 ## Rules

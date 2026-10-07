@@ -23,6 +23,19 @@ Emails are never stored in this code or on your computer. They go to a small onl
 
 **See your emails:** open your database in Upstash → **Data Browser** → key `subscribers`. Each email is listed with its sign-up date.
 
+## Get an email when someone signs up (Resend, free)
+
+1. Go to **resend.com** and sign up with the email where you want the alerts.
+2. Click **API Keys → Create API Key**, name it `devingdev`, permission **Sending access** → **Add**, and copy the key.
+3. In `.env.local` add:
+   ```
+   RESEND_API_KEY=the key
+   NOTIFY_EMAIL=the email you signed up to Resend with
+   ```
+4. Add the same two values on Vercel too.
+
+You get one email per new subscriber (not for repeats), with their address, the time and your total count. Check your spam folder the first time and mark it "Not spam".
+
 ## Put it online (Vercel)
 
 1. Import the GitHub repository at vercel.com (Next.js is detected automatically).
